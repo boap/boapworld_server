@@ -1,6 +1,7 @@
 #include <iostream>
 #include <QString>
 #include <QMutex>
+#include "color.hpp"
 #include "log.hpp"
 
 QMutex Log::_mutex(QMutex::Recursive);
