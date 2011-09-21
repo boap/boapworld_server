@@ -15,7 +15,7 @@ INCLUDE_DIRECTORIES(include)
 AUX_SOURCE_DIRECTORY(src SERVER_SRC)
 SET(SERVER_HEADER
   include/core.hpp
-  include/network.hpp
+  include/tcpserver.hpp
   )
 
 QT4_WRAP_CPP(SERVER_HEADER_MOC ${SERVER_HEADER})

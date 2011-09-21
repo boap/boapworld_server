@@ -1,10 +1,12 @@
 #include	"core.hpp"
+#include	"network.hpp"
 
 Core *Core::_instance = NULL;
 
 Core::Core(void)
 {
-  
+  _network = Network::GetInstance();
+  _network->BindServer();
 }
 
 Core::Core(__attribute__((unused))const Core &ref)
