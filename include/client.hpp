@@ -10,6 +10,7 @@ class   Client
 public:
   ~Client(void);
   static QSharedPointer<Client> create(QTcpSocket *sock);
+
   const QTcpSocket *GetSocket(void) const;
 
   void		ReceiveData(void);
@@ -26,6 +27,8 @@ private:
   QTcpSocket   * _socket;
   State         _state;
 
+  qint32	_packetSize;
+  qint16	_opcode;
   QWeakPointer<Client> _this;
 };
 
