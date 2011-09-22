@@ -50,6 +50,15 @@ void	Log::Debug(const QString &s)
   _mutex.unlock();
 }
 
+void	Log::Info(const QString &s)
+{
+  _mutex.lock();
+  SetColor(Color::Green);
+  std::cout << s.toStdString();
+  ResetColor();
+  _mutex.unlock();
+}
+
 void	Log::Warning(const QString &s)
 {
   _mutex.lock();

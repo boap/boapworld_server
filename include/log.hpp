@@ -19,6 +19,7 @@ public:
   static void	Unlock(void);
 
   static void	Debug(const QString &s);
+  static void	Info(const QString &s);
   static void	Warning(const QString &s);
   static void	Critical(const QString &s);
 };
