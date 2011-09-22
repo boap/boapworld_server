@@ -17,8 +17,7 @@ private:
   
   TcpServer             _server;
   int			_port;
-  QList<QSharedPointer<Client> > _clients;
-  //  QHash<>		_clientsToSockets;
+  QHash<const QTcpSocket *, QSharedPointer<Client> >		_clients;
 
 public:
   ~Network();
@@ -28,9 +27,8 @@ public:
 
   bool			BindServer(void);
   void			AddClient(QSharedPointer<Client> &client);
-  void			RemoveClient(QSharedPointer<Client> &client);
+  void			RemoveClient(const QTcpSocket *sock);
   QSharedPointer<Client> FindClientFromSocket(const QTcpSocket *s);
-  int			FindClientPos(QSharedPointer<Client> &client);
 								 
 public slots:
   void			SlotNewConnection(void);

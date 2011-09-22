@@ -21,6 +21,7 @@ Client::Client(__attribute__((unused)) const Client &ref)
 
 Client::~Client()
 {
+  QMutexLocker locker(&_mutex);
   Log::Debug("Client destroyed!");
   _socket->deleteLater();
 }
@@ -35,6 +36,6 @@ void	Client::ReceiveData(void)
 {
   QMutexLocker locker(&_mutex);
   Log::Debug("data received");
-  //  sleep(5);
+  sleep(5);
   Log::Debug("done!");
 }

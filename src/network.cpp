@@ -43,31 +43,19 @@ bool	Network::BindServer(void)
   return (true);
 }
 
-int	Network::FindClientPos(QSharedPointer<Client> &client)
-{
-  QMutexLocker locker(&_mutex);
-  for (int i = 0; i < _clients.size(); ++i)
-    {
-      if (_clients.at(i) == client)
-	return (i);
-    }
-  return (-1);
-}
-
 void	Network::AddClient(QSharedPointer<Client> &client)
 {
   QMutexLocker locker(&_mutex);
-
-  _clients.append(client);
+  
+  _clients.insert(client->GetSocket(), client);
 }
 
-void	Network::RemoveClient(QSharedPointer<Client> &client)
+void	Network::RemoveClient(const QTcpSocket *client_sock)
 {
   QMutexLocker locker(&_mutex);
   
-  int pos = this->FindClientPos(client);
-  if (pos != -1)
-    _clients.removeAt(pos);
+  if (_clients.contains(client_sock))
+    _clients.remove(client_sock);
   else
     Log::Warning("Trying to remove inexsistant client");
 }
@@ -76,10 +64,7 @@ QSharedPointer<Client> Network::FindClientFromSocket(const QTcpSocket *s)
 {
   QMutexLocker locker(&_mutex);
 
-  for(QList<QSharedPointer<Client> >::const_iterator it = _clients.begin(); it != _clients.end(); ++it)
-    {
-      if ((*it)->GetSocket() == s)
-	return (*it);
-    }
+  if (_clients.contains(s))
+    return (_clients.value(s));
   return (QSharedPointer<Client>());
 }

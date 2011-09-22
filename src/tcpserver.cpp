@@ -39,16 +39,14 @@ void	TcpServer::SlotSocketError(void)
 {
   QTcpSocket *s = qobject_cast<QTcpSocket *>(QObject::sender());
   
-  QSharedPointer<Client> client = Network::GetInstance()->FindClientFromSocket(s);
-  Network::GetInstance()->RemoveClient(client);
+  Network::GetInstance()->RemoveClient(s);
 }
 
 void	TcpServer::SlotSocketDisconnected(void)
 {
   QTcpSocket *s = qobject_cast<QTcpSocket *>(QObject::sender());
 
-  QSharedPointer<Client> client = Network::GetInstance()->FindClientFromSocket(s);
-  Network::GetInstance()->RemoveClient(client);
+  Network::GetInstance()->RemoveClient(s);
 }
 
 void	TcpServer::SlotReceiveData(void)
