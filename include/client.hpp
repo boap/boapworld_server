@@ -12,7 +12,6 @@ public:
   ~Client(void);
   static QSharedPointer<Client> create(QTcpSocket *sock);
   static void (Client::*packetHandler[Op::handledOpcodeMax - Op::handledOpcodeMin + 1])(QByteArray &data);
-
   const QTcpSocket *GetSocket(void) const;
 
   void		ReceiveData(void);
