@@ -4,12 +4,14 @@
 #include <QMutex>
 #include <QTcpSocket>
 #include <QSharedPointer>
+#include "opcode.hpp"
 
 class   Client
 {
 public:
   ~Client(void);
   static QSharedPointer<Client> create(QTcpSocket *sock);
+  static void (Client::*packetHandler[Op::handledOpcodeMax - Op::handledOpcodeMin + 1])(QByteArray &data);
 
   const QTcpSocket *GetSocket(void) const;
 
@@ -19,6 +21,9 @@ public:
       CONNECTED = 0x01, // Connection established but not logged in
       LOGGED    = 0x02,
     };
+
+  /* Network packet handlers */
+  void		Handle_CMSG_TRY_AUTHENTIFICATION(QByteArray &data);
 
 private:
   Client(QTcpSocket *sock);
@@ -30,6 +35,7 @@ private:
   qint32	_packetSize;
   qint16	_opcode;
   QWeakPointer<Client> _this;
+
 };
 
 #endif

@@ -1,6 +1,10 @@
 #include "client.hpp"
 #include "log.hpp"
 
+/* Method pointer initialization */
+void (Client::*packetHandler[Op::handledOpcodeMax - Op::handledOpcodeMin + 1])(QByteArray &data);
+//{&Client::Handle_CMSG_TRY_AUTHENTIFICATION};
+
 QSharedPointer<Client> Client::create(QTcpSocket *s)
 {
   QSharedPointer<Client> ptr(new Client(s));
@@ -62,14 +66,18 @@ void	Client::ReceiveData(void)
         return;
       data = _socket->read(_packetSize);
 
-      // if (client->GetOpcode() <= Op::handledOpcodeMax
-      // 	  && client->GetOpcode() >= Op::handledOpcodeMin)
-      //   (this->*_handlers[client->GetOpcode()])(data, client);
-      // else
-      Log::Warning("Wrong opcode");
+      if (_opcode <= Op::handledOpcodeMax
+      	  && _opcode >= Op::handledOpcodeMin)
+        (this->*packetHandler[_opcode])(data);
+      else
+	Log::Warning("Wrong opcode");
       _opcode = -1;
       _packetSize = -1;
     }
   Log::Debug("done!");
+}
 
+void	Client::Handle_CMSG_TRY_AUTHENTIFICATION(QByteArray &data)
+{
+  Log::Debug("Handling CMSG_TRY_AUTHENTIFICATION");
 }
