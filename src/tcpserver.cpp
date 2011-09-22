@@ -21,26 +21,24 @@ TcpServer::~TcpServer(void)
 
 void	TcpServer::incomingConnection(int s)
 {
-  QSharedPointer<QTcpSocket> sock(new QTcpSocket);
+  QTcpSocket *sock = new QTcpSocket;
   QSharedPointer<Client> client = Client::create(sock);
 
-  Log::Debug("New incoming connection");
   if (!sock->setSocketDescriptor(s))
     {
       Log::Critical("Cannot set socket descriptor");
       return;
     }
-  QObject::connect(sock.data(), SIGNAL(disconnected()), this, SLOT(SlotSocketDisconnected()), Qt::QueuedConnection);
-  QObject::connect(sock.data(), SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(SlotSocketError()), Qt::QueuedConnection);
-  QObject::connect(sock.data(), SIGNAL(readyRead()), this,
-  		   SLOT(SlotReceiveData()));
+  QObject::connect(sock, SIGNAL(disconnected()), this, SLOT(SlotSocketDisconnected()));
+  QObject::connect(sock, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(SlotSocketError()));
+  QObject::connect(sock, SIGNAL(readyRead()), this, SLOT(SlotReceiveData()));
   Network::GetInstance()->AddClient(client);
 }
 
 void	TcpServer::SlotSocketError(void)
 {
   QTcpSocket *s = qobject_cast<QTcpSocket *>(QObject::sender());
-
+  
   QSharedPointer<Client> client = Network::GetInstance()->FindClientFromSocket(s);
   Network::GetInstance()->RemoveClient(client);
 }

@@ -9,8 +9,8 @@ class   Client
 {
 public:
   ~Client(void);
-  static QSharedPointer<Client> create(QSharedPointer<QTcpSocket> &sock);
-  const QSharedPointer<QTcpSocket> &GetSocket(void) const;
+  static QSharedPointer<Client> create(QTcpSocket *sock);
+  const QTcpSocket *GetSocket(void) const;
 
   void		ReceiveData(void);
   enum State
@@ -20,10 +20,10 @@ public:
     };
 
 private:
-  Client(QSharedPointer<QTcpSocket> &sock);
+  Client(QTcpSocket *sock);
   Client(const Client &ref);
   mutable QMutex _mutex;
-  QSharedPointer<QTcpSocket>    _socket;
+  QTcpSocket   * _socket;
   State         _state;
 
   QWeakPointer<Client> _this;

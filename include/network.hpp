@@ -18,6 +18,7 @@ private:
   TcpServer             _server;
   int			_port;
   QList<QSharedPointer<Client> > _clients;
+  //  QHash<>		_clientsToSockets;
 
 public:
   ~Network();
