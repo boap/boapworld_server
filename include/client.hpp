@@ -23,6 +23,7 @@ public:
 
   /* Network packet handlers */
   void		Handle_CMSG_TRY_AUTHENTIFICATION(QByteArray &data);
+  void		Handle_STFU(QByteArray &data);
 
 private:
   Client(QTcpSocket *sock);

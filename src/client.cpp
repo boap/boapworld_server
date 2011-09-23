@@ -1,12 +1,17 @@
 #include "client.hpp"
 #include "log.hpp"
+#include "packet.hpp"
+#include "operators.hpp"
 
 /* Method pointer initialization */
-void (Client::*Client::packetHandler[Op::handledOpcodeMax - Op::handledOpcodeMin + 1])(QByteArray &data) =
-{&Client::Handle_CMSG_TRY_AUTHENTIFICATION};
+void (Client::*Client::packetHandler[Op::handledOpcodeMax - Op::handledOpcodeMin + 1])(QByteArray &data);
+
 
 QSharedPointer<Client> Client::create(QTcpSocket *s)
 {
+  Client::packetHandler[Op::CMSG_TRY_AUTHENTIFICATION] = &Client::Handle_CMSG_TRY_AUTHENTIFICATION;
+  Client::packetHandler[Op::SMSG_AUTHENTIFICATION_RESPONSE] = &Client::Handle_STFU;
+
   QSharedPointer<Client> ptr(new Client(s));
   ptr->_this = ptr.toWeakRef();
   return (ptr);
@@ -70,14 +75,25 @@ void	Client::ReceiveData(void)
       	  && _opcode >= Op::handledOpcodeMin)
 	(this->*packetHandler[_opcode])(data);
       else
-	Log::Warning("Wrong opcode");
+	this->Handle_STFU(data);
       _opcode = -1;
       _packetSize = -1;
     }
   Log::Debug("done!");
 }
 
+void	Client::Handle_STFU(QByteArray &data)
+{
+  Log::Warning("Opcode not handled by server. Probably a server opcode.");
+}
+
 void	Client::Handle_CMSG_TRY_AUTHENTIFICATION(QByteArray &data)
 {
-  Log::Debug("Handling CMSG_TRY_AUTHENTIFICATION");
+  t_2strings pack;
+
+  Log::Debug("Handling CMSG_TRY_AUTHENTIFICATION");  
+
+  data >> pack;
+  Log::Debug("Client try to connect with username \"" + pack.str1 + "\" and" +
+	     " password \"" + pack.str2 + "\"");
 }
