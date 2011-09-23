@@ -2,6 +2,7 @@
 #include "log.hpp"
 #include "packet.hpp"
 #include "operators.hpp"
+#include "db/client.hpp"
 
 /* Method pointer initialization */
 void (Client::*Client::packetHandler[Op::handledOpcodeMax - Op::handledOpcodeMin + 1])(QByteArray &data);
@@ -94,6 +95,7 @@ void	Client::Handle_CMSG_TRY_AUTHENTIFICATION(QByteArray &data)
   Log::Debug("Handling CMSG_TRY_AUTHENTIFICATION");  
 
   data >> pack;
+  DB::Client toto;
   Log::Debug("Client try to connect with username \"" + pack.str1 + "\" and" +
 	     " password \"" + pack.str2 + "\"");
 }

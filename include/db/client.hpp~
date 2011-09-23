@@ -1,0 +1,13 @@
+#ifndef	_DB_USER_HPP_
+#define	_DB_USER_HPP_
+
+#include "db/db.hpp"
+
+class DB::User
+{
+public:
+  User();
+  ~User();
+};
+
+#endif
