@@ -28,13 +28,14 @@ public:
 private:
   Client(QTcpSocket *sock);
   Client(const Client &ref);
-  mutable QMutex _mutex;
-  QTcpSocket   * _socket;
-  State         _state;
 
-  qint32	_packetSize;
-  qint16	_opcode;
-  QWeakPointer<Client> _this;
+  mutable QMutex        _mutex;
+  QTcpSocket            *_socket;
+  State                 _state;
+
+  qint32                _packetSize;
+  qint16                _opcode;
+  QWeakPointer<Client>  _this;
 
 };
 

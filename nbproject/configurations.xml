@@ -16,8 +16,6 @@
           <df name="CompilerIdCXX">
             <in>CMakeCXXCompilerId.cpp</in>
           </df>
-          <df name="Progress">
-          </df>
           <df name="server.dir">
             <df name="include">
             </df>
@@ -28,22 +26,7 @@
           </df>
         </df>
         <df name="include">
-          <in>moc_core.cxx</in>
           <in>moc_tcpserver.cxx</in>
-        </df>
-      </df>
-      <df name="CMakeFiles">
-        <df name="CMakeTmp">
-          <df name="CMakeFiles">
-            <df name="cmTryCompileExec.dir">
-            </df>
-          </df>
-        </df>
-        <df name="CompilerIdC">
-          <in>CMakeCCompilerId.c</in>
-        </df>
-        <df name="CompilerIdCXX">
-          <in>CMakeCXXCompilerId.cpp</in>
         </df>
       </df>
       <df name="include">
@@ -120,26 +103,6 @@
           </ccTool>
         </makeTool>
       </makefileType>
-      <item path="CMakeFiles/CompilerIdC/CMakeCCompilerId.c"
-            ex="true"
-            tool="0"
-            flavor="0">
-      </item>
-      <item path="CMakeFiles/CompilerIdCXX/CMakeCXXCompilerId.cpp"
-            ex="true"
-            tool="1"
-            flavor="0">
-      </item>
-      <item path="build/CMakeFiles/CompilerIdC/CMakeCCompilerId.c"
-            ex="true"
-            tool="0"
-            flavor="0">
-      </item>
-      <item path="build/CMakeFiles/CompilerIdCXX/CMakeCXXCompilerId.cpp"
-            ex="true"
-            tool="1"
-            flavor="0">
-      </item>
     </conf>
   </confs>
 </configurationDescriptor>

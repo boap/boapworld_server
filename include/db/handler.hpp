@@ -4,10 +4,9 @@
 #include "db/db.hpp"
 #include <QMutex>
 #include <QMap>
-#include <QSqlDatabase>
-#include <QThread>
 
-#include "db/db.hpp"
+class QSqlDatabase;
+class QThread;
 
 namespace DB
 {
@@ -23,6 +22,6 @@ namespace DB
 
         static QMap<QThread *, QSqlDatabase *> _dbs;
         static QMutex _mutex;
-    };
+    } ;
 }
 #endif

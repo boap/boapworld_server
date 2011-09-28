@@ -1,6 +1,7 @@
-#include	"network.hpp"
-#include	"log.hpp"
-#include	<QMutex>
+#include        "network.hpp"
+#include        "log.hpp"
+#include        "client.hpp"
+#include        <QMutex>
 
 Network *Network::_instance = NULL;
 QMutex	Network::_mutex(QMutex::Recursive);
@@ -46,7 +47,7 @@ bool	Network::BindServer(void)
 void	Network::AddClient(QSharedPointer<Client> &client)
 {
   QMutexLocker locker(&_mutex);
-  
+
   _clients.insert(client->GetSocket(), client);
 }
 
@@ -57,7 +58,7 @@ void	Network::RemoveClient(const QTcpSocket *client_sock)
   if (_clients.contains(client_sock))
     _clients.remove(client_sock);
   else
-    Log::Warning("Trying to remove inexsistant client");
+    Log::Warning("Trying to remove non-existing client.");
 }
 
 QSharedPointer<Client> Network::FindClientFromSocket(const QTcpSocket *s)
