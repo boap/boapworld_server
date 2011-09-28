@@ -11,6 +11,6 @@ DB::Handler::~Handler(void)
 
 }
 
-DB::Handler::GetDb(void)
+QSqlDatabase *DB::Handler::GetDb(void)
 {
- }
+}

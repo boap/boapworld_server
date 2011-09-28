@@ -8,6 +8,6 @@ int		main(int ac, char **av)
 {
   QCoreApplication app(ac, av);
   QSharedPointer<Core> c(Core::GetInstance());
-  DB::Client::FetchPasswordFromUsername("BOAP");
+
   return (app.exec());
 }

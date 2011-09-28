@@ -4,6 +4,8 @@
 #include "db/db.hpp"
 #include <QMutex>
 #include <QMap>
+#include <QSqlDatabase>
+#include <QThread>
 
 class DB::Handler
 {
