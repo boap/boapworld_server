@@ -4,13 +4,16 @@
 #include "db/db.hpp"
 #include <QSharedPointer>
 
-class DB::Client
+namespace DB
 {
-public:
-  Client(void);
-  ~Client(void);
 
-  static QSharedPointer<QString> FetchPasswordFromUsername(const QString &username);
-};
+    class Client
+    {
+    public:
+        Client(void);
+        ~Client(void);
 
+        static QSharedPointer<QString> FetchPasswordFromUsername(const QString &username);
+    };
+}
 #endif

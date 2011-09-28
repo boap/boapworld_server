@@ -3,7 +3,8 @@
 
 namespace DB
 {
-  class Client;
-  class Handler;
-};
+    class Client;
+    class Handler;
+}
+
 #endif

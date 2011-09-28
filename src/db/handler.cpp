@@ -1,6 +1,7 @@
-#include "db/handler.hpp"
+#include        "db/handler.hpp"
 
 QMutex DB::Handler::_mutex;
+
 DB::Handler::Handler(void)
 {
 

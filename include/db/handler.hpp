@@ -7,17 +7,22 @@
 #include <QSqlDatabase>
 #include <QThread>
 
-class DB::Handler
+#include "db/db.hpp"
+
+namespace DB
 {
-public:
-  static QSqlDatabase *GetDb(void);
 
-private:
-  Handler();
-  ~Handler();
+    class Handler
+    {
+    public:
+        static QSqlDatabase *GetDb(void);
 
-  static QMap<QThread *, QSqlDatabase *> _dbs;
-  static QMutex	_mutex;
-};
+    private:
+        Handler();
+        ~Handler();
 
+        static QMap<QThread *, QSqlDatabase *> _dbs;
+        static QMutex _mutex;
+    };
+}
 #endif
