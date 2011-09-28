@@ -15,7 +15,6 @@ INCLUDE_DIRECTORIES(include)
 AUX_SOURCE_DIRECTORY(src SERVER_SRC)
 AUX_SOURCE_DIRECTORY(src/db SERVER_SRC)
 SET(SERVER_HEADER
-  include/core.hpp
   include/tcpserver.hpp
   )
 
