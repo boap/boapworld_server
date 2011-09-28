@@ -3,6 +3,7 @@
 #include "packet.hpp"
 #include "operators.hpp"
 #include "db/client.hpp"
+#include <QThread>
 
 /* Method pointer initialization */
 void (Client::*Client::packetHandler[Op::handledOpcodeMax - Op::handledOpcodeMin + 1])(QByteArray &data);
@@ -52,7 +53,7 @@ void	Client::ReceiveData(void)
   QByteArray    data;
 
   Log::Debug("Data received.");
-
+  
   stream.setVersion(QDataStream::Qt_4_0);
   while (_socket->bytesAvailable())
     {
@@ -92,10 +93,10 @@ void	Client::Handle_CMSG_TRY_AUTHENTIFICATION(QByteArray &data)
 {
   t_2strings pack;
 
-  Log::Debug("Handling CMSG_TRY_AUTHENTIFICATION");  
-
-  data >> pack;
-  DB::Client toto;
-  Log::Debug("Client try to connect with username \"" + pack.str1 + "\" and" +
-	     " password \"" + pack.str2 + "\"");
+  //  Log::Debug("Handling CMSG_TRY_AUTHENTIFICATION");  
+  
+  //  data >> pack;
+  //  DB::Client toto;
+  //  Log::Debug("Client try to connect with username \"" + pack.str1 + "\" and" +
+  //	     " password \"" + pack.str2 + "\"");
 }

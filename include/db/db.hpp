@@ -4,5 +4,6 @@
 namespace DB
 {
   class Client;
+  class Handler;
 };
 #endif
