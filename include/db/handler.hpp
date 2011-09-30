@@ -14,14 +14,13 @@ namespace DB
     class Handler
     {
     public:
-        static QSqlDatabase *GetDb(void);
+        static QSqlDatabase GetDb(void);
 
     private:
         Handler();
         ~Handler();
 
-        static QMap<QThread *, QSqlDatabase *> _dbs;
-        static QMutex _mutex;
+      static QMutex & _mutex();
     } ;
 }
 #endif

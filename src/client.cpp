@@ -6,7 +6,9 @@
 #include "db/handler.hpp"
 #include "network.hpp"
 #include "core.hpp"
+#include "exception.hpp"
 #include <QThread>
+#include <QSqlDatabase>
 
 /* Method pointer initialization */
 void (Client::*Client::packetHandler[Op::handledOpcodeMax - Op::handledOpcodeMin + 1])(QByteArray &data);
@@ -50,56 +52,57 @@ const QTcpSocket *Client::GetSocket(void) const
 
 void	Client::ReceiveData(void)
 {
-    QMutexLocker        locker(&_mutex);
-    QDataStream         stream(_socket);
-    QByteArray          data;
+  QMutexLocker        locker(&_mutex);
+  QDataStream         stream(_socket);
+  QByteArray          data;
 
-    Log::Debug("Data received.");
-
-    stream.setVersion(QDataStream::Qt_4_0);
-    while (_socket->bytesAvailable())
+  Log::Debug("Data received.");
+  stream.setVersion(QDataStream::Qt_4_0);
+  while (_socket->bytesAvailable())
     {
-        if (_packetSize == -1)
-        {
-            if (_socket->bytesAvailable() < (qint64)sizeof (qint32))
-                return;
-            stream >> _packetSize;
-        }
-        if (_opcode == -1)
-        {
-            if (_socket->bytesAvailable() < (qint64)sizeof (qint16))
-                return;
-            stream >> _opcode;
-        }
-        if (_socket->bytesAvailable() < _packetSize)
-            return;
-        data = _socket->read(_packetSize);
+      if (_packetSize == -1)
+	{
+	  if (_socket->bytesAvailable() < (qint64)sizeof (qint32))
+	    return;
+	  stream >> _packetSize;
+	}
+      if (_opcode == -1)
+	{
+	  if (_socket->bytesAvailable() < (qint64)sizeof (qint16))
+	    return;
+	  stream >> _opcode;
+	}
+      if (_socket->bytesAvailable() < _packetSize)
+	return;
+      data = _socket->read(_packetSize);
 
-        if (_opcode <= Op::handledOpcodeMax
-            && _opcode >= Op::handledOpcodeMin)
-            (this->*packetHandler[_opcode])(data);
-        else
-            this->Handle_STFU(data);
-        _opcode = -1;
-        _packetSize = -1;
+      if (_opcode <= Op::handledOpcodeMax
+	  && _opcode >= Op::handledOpcodeMin)
+	(this->*packetHandler[_opcode])(data);
+      else
+	this->Handle_STFU(data);
+      _opcode = -1;
+      _packetSize = -1;
     }
-    Log::Debug("done!");
+  Log::Debug("done!");
 }
 
 void	Client::Handle_STFU(QByteArray &data)
 {
-    Log::Warning("Opcode not handled by server. Probably a server opcode.");
+  Log::Warning("Opcode not handled by server. Probably a server opcode.");
 }
 
 void	Client::Handle_CMSG_TRY_AUTHENTIFICATION(QByteArray &data)
 {
-    t_2strings pack;
+  t_2strings pack;
 
-    Log::Debug("Handling CMSG_TRY_AUTHENTIFICATION");
-
-    data >> pack;
-    DB::Client toto;
-
-    Log::Debug("Client try to connect with username \"" + pack.str1 + "\" and" +
-               " password \"" + pack.str2 + "\"");
+  Log::Debug("Handling CMSG_TRY_AUTHENTIFICATION");
+  data >> pack;
+  Log::Debug("Client try to connect with username \"" + pack.str1 + "\" and" +
+	     " password \"" + pack.str2 + "\"");
+  QSharedPointer<QString> valid = DB::Client::FetchPasswordFromUsername(pack.str1);
+  if (valid)
+    Log::Debug("valid pw is: " + *valid);
+  else
+    Log::Debug("uknown username");
 }

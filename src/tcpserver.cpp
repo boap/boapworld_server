@@ -1,6 +1,7 @@
 #include "tcpserver.hpp"
 #include "log.hpp"
 #include "network.hpp"
+#include "exception.hpp"
 #include <QSharedPointer>
 #include <QtConcurrentRun>
 
@@ -35,6 +36,23 @@ void	TcpServer::incomingConnection(int s)
   Network::GetInstance()->AddClient(client);
 }
 
+void	TcpServer::CallClientReceiveData(Client *c)
+{
+  if (!c)
+    {
+      Log::Warning("Call CallClientReceiveData with a NULL client.");
+      return;
+    }
+  try
+    {
+      c->ReceiveData();
+    }
+  catch (const Exception e)
+    {
+      Log::Critical("An exception has been raised: " + e.GetMessage());
+    }
+}
+
 void	TcpServer::SlotSocketError(void)
 {
   QTcpSocket *s = qobject_cast<QTcpSocket *>(QObject::sender());
@@ -54,5 +72,5 @@ void	TcpServer::SlotReceiveData(void)
   QTcpSocket *s = qobject_cast<QTcpSocket *>(QObject::sender());
 
   QSharedPointer<Client> client = Network::GetInstance()->FindClientFromSocket(s);
-  QtConcurrent::run(client.data(), &Client::ReceiveData);
+  QtConcurrent::run(TcpServer::CallClientReceiveData, client.data());
 }

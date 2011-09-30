@@ -1,8 +1,10 @@
 #include        "db/handler.hpp"
 #include        "log.hpp"
 #include        "network.hpp"
+#include	"exception.hpp"
 #include        <QThread>
 #include        <QSqlDatabase>
+#include	<QSqlError>
 
 DB::Handler::Handler(void)
 {
@@ -14,27 +16,38 @@ DB::Handler::~Handler(void)
 
 }
 
-QSqlDatabase            *DB::Handler::GetDb(void)
+QMutex & DB::Handler::_mutex()
 {
-    QMutexLocker        locker(&_mutex);
-    QThread             *thread;
-    QSqlDatabase        *db;
+  static QMutex *ptr = new QMutex();
+  return (*ptr);
+}
 
-    thread = QThread::currentThread();
-    if (_dbs.contains(thread))
-        return (_dbs.value(thread));
-    Log::Info("Creating new SQL connection.");
-    db = new QSqlDatabase();
-    db->setDatabaseName("mmo");
-    db->setHostName("xaqq.fr");
-    db->setPassword("mmo");
-    db->setUserName("mmo");
-    if (!db->open())
+QSqlDatabase          DB::Handler::GetDb(void)
+{
+  QMutexLocker        locker(&_mutex());
+  QThread             *thread;
+  QSqlDatabase        db;
+  QString	      name;
+
+  thread = QThread::currentThread();
+  name = "Connection_" + QString::number(reinterpret_cast<long>(thread));
+  if (QSqlDatabase::contains(name))
     {
-        Log::Critical("Cannot open new SQL connection.");
-        free(db);
-        return (NULL);
+      db = QSqlDatabase::database(name, false);
+      if (db.isOpen() || db.open())
+	return (db);
+      else
+	throw Exception("Cannot open the thread connection to SQL database: "
+			+ db.lastError().text());
     }
-    _dbs.insert(thread, db);
-    return (db);
+  Log::Info("Creating new SQL connection...");
+  db = QSqlDatabase::addDatabase("QMYSQL", name);
+  db.setDatabaseName("boap");
+  db.setHostName("xaqq.fr");
+  db.setPassword("test");
+  db.setUserName("test");
+  if (!db.open())
+    throw Exception("Cannot create a valid connection to SQL database: "
+		    + db.lastError().text());
+  return (db);
 }
