@@ -98,13 +98,16 @@ void	Client::Handle_CMSG_TRY_AUTHENTIFICATION(QByteArray &data)
   data >> pack;
   Log::Debug("Client try to connect with username \"" + pack.str1 + "\" and" +
 	     " password \"" + pack.str2 + "\"");
-  QSharedPointer<QString> valid = DB::Client::FetchPasswordFromUsername(pack.str1);
+  QSharedPointer<QString> pw = DB::Client::FetchPasswordFromUsername(pack.str1);
 
   QSharedPointer<QByteArray> p(new QByteArray());
-  if (valid)
+  if (pw)
     {
-      if (*valid == pack.str2)
+      if (*pw == pack.str2)
+      {
 	Network::PrepPacket(p, (qint8)Op::Connection::OK, Op::SMSG_AUTHENTIFICATION_RESPONSE);
+        _state = Client::LOGGED;
+      }
       else
 	Network::PrepPacket(p, (qint8)Op::Connection::WRONG_PASSWORD, Op::SMSG_AUTHENTIFICATION_RESPONSE);
     }

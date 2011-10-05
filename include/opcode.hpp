@@ -8,18 +8,26 @@ namespace Op
 
   enum
     {
-      CMSG_TRY_AUTHENTIFICATION =	(qint16) 0x0001, // uses a t_2strings
-      SMSG_AUTHENTIFICATION_RESPONSE =	(qint16) 0x0002 // uses a qint8
+      /**
+       * Send by client when trying to log in
+       * @notes it uses a t_2strings
+       */
+      CMSG_TRY_AUTHENTIFICATION                 = (qint16) 0x0001,
+      /**
+       * Response to the authentification attemps.
+       * @notes it uses a qint8.
+       */
+      SMSG_AUTHENTIFICATION_RESPONSE            = (qint16) 0x0002 
     };
   
   namespace Connection
   {
     enum
       {
-	WRONG_USERNAME		      = (qint8) 0x0001,
+	WRONG_USERNAME                  = (qint8) 0x0001,
 	WRONG_PASSWORD                  = (qint8) 0x0002,
-	ALREADY_LOGGED_IN             = (qint8) 0x0003,
-	OK                            = (qint8) 0x0004
+	ALREADY_LOGGED_IN               = (qint8) 0x0003,
+	OK                              = (qint8) 0x0004
       };
   };
 

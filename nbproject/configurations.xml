@@ -26,6 +26,7 @@
           </df>
         </df>
         <df name="include">
+          <in>moc_network.cxx</in>
           <in>moc_tcpserver.cxx</in>
         </df>
       </df>
@@ -38,6 +39,7 @@
         <in>client.hpp</in>
         <in>color.hpp</in>
         <in>core.hpp</in>
+        <in>exception.hpp</in>
         <in>log.hpp</in>
         <in>network.hpp</in>
         <in>opcode.hpp</in>
@@ -52,6 +54,7 @@
         </df>
         <in>client.cpp</in>
         <in>core.cpp</in>
+        <in>exception.cpp</in>
         <in>log.cpp</in>
         <in>main.cpp</in>
         <in>network.cpp</in>
