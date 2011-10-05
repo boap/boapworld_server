@@ -25,7 +25,7 @@ public:
    * The purpose of this function, which is run in a thread
    * is to try/catch the Client::ReceiveData method.
    */
-  static void CallClientReceiveData(Client *);
+  static void CallClientReceiveData(QSharedPointer<Client> c);
 
 public slots:
   void SlotReceiveData(void);

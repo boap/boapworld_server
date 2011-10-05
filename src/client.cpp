@@ -56,8 +56,6 @@ void	Client::ReceiveData(void)
   QDataStream         stream(_socket);
   QByteArray          data;
 
-  this->Handle_CMSG_TRY_AUTHENTIFICATION(data);
-  return;
   stream.setVersion(QDataStream::Qt_4_0);
   while (_socket->bytesAvailable())
     {

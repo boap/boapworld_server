@@ -37,9 +37,9 @@ void	TcpServer::incomingConnection(int s)
   Network::GetInstance()->AddClient(client);
 }
 
-void	TcpServer::CallClientReceiveData(Client *c)
+void	TcpServer::CallClientReceiveData(QSharedPointer<Client> c)
 {
-  if (!c)
+  if (!c.data())
     {
       Log::Warning("Call CallClientReceiveData with a NULL client.");
       return;
@@ -73,5 +73,5 @@ void	TcpServer::SlotReceiveData(void)
   QTcpSocket *s = qobject_cast<QTcpSocket *>(QObject::sender());
 
   QSharedPointer<Client> client = Network::GetInstance()->FindClientFromSocket(s);
-  QtConcurrent::run(TcpServer::CallClientReceiveData, client.data());
+  QtConcurrent::run(TcpServer::CallClientReceiveData, client);
 }
