@@ -23,7 +23,7 @@ QSharedPointer<Client> Client::create(QTcpSocket *s)
     return (ptr);
 }
 
-Client::Client(QTcpSocket *sock)
+Client::Client(QTcpSocket *sock) : _mutex(QMutex::Recursive)
 {
     Log::Debug("New client created!");
     _socket = sock;
@@ -56,7 +56,8 @@ void	Client::ReceiveData(void)
   QDataStream         stream(_socket);
   QByteArray          data;
 
-  Log::Debug("Data received.");
+  this->Handle_CMSG_TRY_AUTHENTIFICATION(data);
+  return;
   stream.setVersion(QDataStream::Qt_4_0);
   while (_socket->bytesAvailable())
     {
@@ -84,7 +85,6 @@ void	Client::ReceiveData(void)
       _opcode = -1;
       _packetSize = -1;
     }
-  Log::Debug("done!");
 }
 
 void	Client::Handle_STFU(QByteArray &data)
@@ -101,8 +101,16 @@ void	Client::Handle_CMSG_TRY_AUTHENTIFICATION(QByteArray &data)
   Log::Debug("Client try to connect with username \"" + pack.str1 + "\" and" +
 	     " password \"" + pack.str2 + "\"");
   QSharedPointer<QString> valid = DB::Client::FetchPasswordFromUsername(pack.str1);
+
+  QSharedPointer<QByteArray> p(new QByteArray());
   if (valid)
-    Log::Debug("valid pw is: " + *valid);
+    {
+      if (*valid == pack.str2)
+	Network::PrepPacket(p, (qint8)Op::Connection::OK, Op::SMSG_AUTHENTIFICATION_RESPONSE);
+      else
+	Network::PrepPacket(p, (qint8)Op::Connection::WRONG_PASSWORD, Op::SMSG_AUTHENTIFICATION_RESPONSE);
+    }
   else
-    Log::Debug("uknown username");
+    Network::PrepPacket(p, (qint8)Op::Connection::WRONG_USERNAME, Op::SMSG_AUTHENTIFICATION_RESPONSE);
+  Network::GetInstance()->SendPacket(p, this->_socket);
 }

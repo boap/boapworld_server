@@ -2,6 +2,7 @@
 #include        "log.hpp"
 #include        "client.hpp"
 #include        <QMutex>
+#include	<QThread>
 
 Network *Network::_instance = NULL;
 QMutex	Network::_mutex(QMutex::Recursive);
@@ -9,6 +10,10 @@ QMutex	Network::_mutex(QMutex::Recursive);
 Network::Network(int port)
 {
   _port = port;
+  _queueTimer.setInterval(10);
+  _queueTimer.setSingleShot(false);
+  QObject::connect(&_queueTimer, SIGNAL(timeout()), this, SLOT(FlushQueue()));
+  _queueTimer.start();
 }
 
 Network::Network(__attribute__((unused)) const Network& ref) : QObject()
@@ -68,4 +73,32 @@ QSharedPointer<Client> Network::FindClientFromSocket(const QTcpSocket *s)
   if (_clients.contains(s))
     return (_clients.value(s));
   return (QSharedPointer<Client>());
+}
+
+void		Network::SendPacket(QSharedPointer<QByteArray> &data, QTcpSocket *s)
+{
+  QMutexLocker	lock(&_mutex);
+  t_queued	p;
+    
+  p.sock = s;
+  p.data = data;
+  _queue.append(p);
+}
+
+void		Network::FlushQueue()
+{
+  QMutexLocker lock(&_mutex);
+
+  for (QList<t_queued>::iterator it = _queue.begin(); it != _queue.end(); ++it)
+    {
+      Log::Debug("Sending packet");
+      QSharedPointer<Client>	c = FindClientFromSocket((*it).sock);
+      if (c)
+	{
+	  c->Lock();
+	  (*it).sock->write(*((*it).data.data()));
+	  c->Unlock();
+	}
+      _queue.removeAll(*it);
+    }
 }

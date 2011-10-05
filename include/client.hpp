@@ -21,6 +21,10 @@ public:
       LOGGED    = 0x02,
     };
 
+  void		Lock(void) { _mutex.lock(); };
+  void		Unlock(void) { _mutex.unlock(); };
+
+
   /* Network packet handlers */
   void		Handle_CMSG_TRY_AUTHENTIFICATION(QByteArray &data);
   void		Handle_STFU(QByteArray &data);

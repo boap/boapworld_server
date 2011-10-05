@@ -25,7 +25,8 @@ void	TcpServer::incomingConnection(int s)
   QTcpSocket *sock = new QTcpSocket;
   QSharedPointer<Client> client = Client::create(sock);
 
-  if (!sock->setSocketDescriptor(s))
+  if (!sock->setSocketDescriptor(s, QAbstractSocket::ConnectedState,
+				 QIODevice::ReadWrite))
     {
       Log::Critical("Cannot set socket descriptor");
       return;

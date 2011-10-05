@@ -3,12 +3,16 @@
 
 #include <QMutex>
 #include <QList>
+#include <QTimer>
 #include <QSharedPointer>
 #include "client.hpp"
 #include "tcpserver.hpp"
+#include "packet.hpp"
+#include "operators.hpp"
 
 class   Network : public QObject
 {
+  Q_OBJECT
 private:
   Network(int port = 4242);
   Network(const Network &ref);
@@ -18,6 +22,8 @@ private:
   TcpServer             _server;
   int			_port;
   QHash<const QTcpSocket *, QSharedPointer<Client> >		_clients;
+  QList<t_queued>	_queue;
+  QTimer		_queueTimer;
 
 public:
   ~Network();
@@ -29,9 +35,29 @@ public:
   void			AddClient(QSharedPointer<Client> &client);
   void			RemoveClient(const QTcpSocket *sock);
   QSharedPointer<Client> FindClientFromSocket(const QTcpSocket *s);
+
+  /**
+   * Prepare the packet by filling the ByteArray.
+   * @param data
+   * @param packet
+   * @param opcode
+   */
+  template	<typename PacketType>
+  static void		PrepPacket(QSharedPointer<QByteArray> &data, const PacketType &packet, qint16 opcode)
+  {
+    QDataStream   s(data.data(), QIODevice::WriteOnly);
+
+    s << (qint32) 0;
+    s << opcode;
+    s << packet;
+    s.device()->seek(0);
+    s << (qint32) (data->size() - (sizeof (qint32) + sizeof (qint16)));
+  }
+
+  void		SendPacket(QSharedPointer<QByteArray> &data, QTcpSocket *s);
 								 
 public slots:
-  void			SlotNewConnection(void);
+  void			FlushQueue(void);
 };
 
 #endif
