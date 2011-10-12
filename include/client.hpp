@@ -25,6 +25,7 @@ public:
     static void (Client::*packetHandler[Op::handledOpcodeMax - Op::handledOpcodeMin + 1])(QByteArray &data);
     
     const QTcpSocket *GetSocket(void) const;
+  const QString		&GetUsername(void) const;
 
     /**
      * This method is called in a worker thread by the TcpServer whenever
@@ -80,6 +81,7 @@ private:
     mutable QMutex        _mutex;
     QTcpSocket            *_socket;
     State                 _state;
+    QString               _username;
 
     qint32                _packetSize;
     qint16                _opcode;

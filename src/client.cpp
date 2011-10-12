@@ -50,6 +50,11 @@ const QTcpSocket *Client::GetSocket(void) const
     return (_socket);
 }
 
+const QString	&Client::GetUsername(void) const
+{
+  return (_username);
+}
+
 void	Client::ReceiveData(void)
 {
   QMutexLocker        locker(&_mutex);
@@ -101,17 +106,19 @@ void	Client::Handle_CMSG_TRY_AUTHENTIFICATION(QByteArray &data)
   QSharedPointer<QString> pw = DB::Client::FetchPasswordFromUsername(pack.str1);
 
   QSharedPointer<QByteArray> p(new QByteArray());
-  if (pw)
+  if (!pw)
+    Network::PrepPacket(p, (qint8)Op::Connection::WRONG_USERNAME, Op::SMSG_AUTHENTIFICATION_RESPONSE);
+  else if (*pw == pack.str2)
     {
-      if (*pw == pack.str2)
-      {
-	Network::PrepPacket(p, (qint8)Op::Connection::OK, Op::SMSG_AUTHENTIFICATION_RESPONSE);
-        _state = Client::LOGGED;
-      }
+      if (Network::GetInstance()->HasClientWithUsername(pack.str1))
+	Network::PrepPacket(p, (qint8)Op::Connection::ALREADY_LOGGED_IN, Op::SMSG_AUTHENTIFICATION_RESPONSE);
       else
-	Network::PrepPacket(p, (qint8)Op::Connection::WRONG_PASSWORD, Op::SMSG_AUTHENTIFICATION_RESPONSE);
+	{
+	  Network::PrepPacket(p, (qint8)Op::Connection::OK, Op::SMSG_AUTHENTIFICATION_RESPONSE);
+	  _state = LOGGED;
+	}
     }
   else
-    Network::PrepPacket(p, (qint8)Op::Connection::WRONG_USERNAME, Op::SMSG_AUTHENTIFICATION_RESPONSE);
+    Network::PrepPacket(p, (qint8)Op::Connection::WRONG_PASSWORD, Op::SMSG_AUTHENTIFICATION_RESPONSE);
   Network::GetInstance()->SendPacket(p, this->_socket);
 }

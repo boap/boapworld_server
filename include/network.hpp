@@ -36,6 +36,7 @@ public:
   void			RemoveClient(const QTcpSocket *sock);
   QSharedPointer<Client> FindClientFromSocket(const QTcpSocket *s);
 
+  bool			HasClientWithUsername(const QString &ref) const;
   /**
    * Prepare the packet by filling the ByteArray.
    * @param data

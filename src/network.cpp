@@ -10,7 +10,7 @@ QMutex	Network::_mutex(QMutex::Recursive);
 Network::Network(int port)
 {
   _port = port;
-  _queueTimer.setInterval(10);
+  _queueTimer.setInterval(0);
   _queueTimer.setSingleShot(false);
   QObject::connect(&_queueTimer, SIGNAL(timeout()), this, SLOT(FlushQueue()));
   _queueTimer.start();
@@ -73,6 +73,19 @@ QSharedPointer<Client> Network::FindClientFromSocket(const QTcpSocket *s)
   if (_clients.contains(s))
     return (_clients.value(s));
   return (QSharedPointer<Client>());
+}
+
+bool		Network::HasClientWithUsername(const QString &ref) const
+{
+  QMutexLocker locker(&_mutex);
+
+  for (QHash<const QTcpSocket *, QSharedPointer<Client> >::const_iterator it = _clients.constBegin();
+       it != _clients.end(); ++it)
+    {
+      if ((*it)->GetUsername() == ref)
+	return (true);
+    }
+  return (false);
 }
 
 void		Network::SendPacket(QSharedPointer<QByteArray> &data, QTcpSocket *s)
